@@ -1,0 +1,25 @@
+﻿
+
+
+
+
+body
+{
+	margin:0;
+	padding:0;
+	color:#202020;
+	font-size:12px;
+}
+
+
+/*
+body, input, textarea
+{
+	font-family: Arial, Verdana, sans-serif;
+}
+*/
+
+.main
+{
+	padding:20px;
+}
