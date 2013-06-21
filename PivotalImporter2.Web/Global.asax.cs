@@ -23,14 +23,13 @@ namespace PivotalImporter2.Web
 
 			BootStrapper.Bootstrap();
 			//AreaRegistration.RegisterAllAreas();
-			//RegisterRoutes(RouteTable.Routes);
 			InitializeContainer();
 
 			// Json deserialiser in mvc 2 futures nuget package
 			ValueProviderFactories.Factories.Add(new JsonValueProviderFactory());
 			GlobalConfiguration.Configuration.Filters.Add(new System.Web.Http.AuthorizeAttribute());
 		}
-		
+
 		public static void RegisterRoutes(RouteCollection routes)
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
@@ -38,11 +37,11 @@ namespace PivotalImporter2.Web
 			routes.MapRoute(
 				"Default", // Route name
 				"{controller}/{action}/{id}", // URL with parameters
-				new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
-			);
+				new {controller = "Home", action = "Index", id = UrlParameter.Optional} // Parameter defaults
+				);
 
 		}
-		
+
 		private void InitializeContainer()
 		{
 			ControllerBuilder.Current.SetControllerFactory(new StructureMapControllerFactory());

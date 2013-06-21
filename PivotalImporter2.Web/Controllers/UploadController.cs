@@ -28,11 +28,16 @@ namespace PivotalImporter2.Web.Controllers
 
 		public ActionResult Index()
 		{
-			var projects = pivotalService.Projects();
-			return View(new UploadModel(new List<PivotalStory>(), projects, Enumerable.Empty<PivotalMembership>(), Enumerable.Empty<string>(), -1, null));
+			return View(indexViewModel());
 		}
 
-		
+		private UploadViewModel indexViewModel()
+		{
+			// TODO ! Model Validation of form
+			var projects = pivotalService.Projects();
+			return new UploadViewModel(new List<PivotalStory>(), projects, Enumerable.Empty<PivotalMembership>(), Enumerable.Empty<string>(), -1, null, null);
+		}
+
 		/// <summary>
 		/// Accepts uploaded file and extracts PivotalStories ready to upload and display for confirmation
 		/// </summary>
@@ -40,59 +45,41 @@ namespace PivotalImporter2.Web.Controllers
 		/// <param name="projectId"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult Confirm(HttpPostedFileBase file, int projectId)
+		public ActionResult Confirm(UploadFileModel uploadModel)
 		{
-			if (file.ContentLength > 0)
+			if (!ModelState.IsValid)
 			{
-				var genericLabels = String.Empty;
-				var ext = file.FileName.Split('.').Last();
-				var fileName = DateTime.Now.ToString("yyMMdd_hhmmss_") + Guid.NewGuid() + "." + ext;
-				var path = Path.Combine(Server.MapPath(Domain.Configuration.DefaultUploadUri), fileName);
-				file.SaveAs(path);
-
-				//var stories = pivotalExcelService.Stories(Path.Combine(Server.MapPath(Domain.Configuration.DefaultUploadUri), fileName));
-				var importInfo = pivotalExcelService.ImportInfo(Path.Combine(Server.MapPath(Domain.Configuration.DefaultUploadUri), fileName));
-				var stories = importInfo.Stories;
-				var projects = pivotalService.Projects();
-				var memberships = pivotalService.ProjectUsers(Domain.Configuration.PivotalDefaultProjectId);
-				var storyTypes = pivotalService.StoryTypes();
-
-				var model = new UploadModel(
-					stories.ToList()
-					, projects
-					, memberships
-					, storyTypes
-					, projectId
-					, importInfo.GenericLabels
-					);
-
-				return View(model);
+				return View("index", indexViewModel());
 			}
 
-			return RedirectToAction("Index");
-		}
+			var file = uploadModel.File;
+			var projectId = uploadModel.ProjectId;
 
-		///-- For testing purposes
-		public ActionResult Confirm()
-		{
-			var fileName = "pivotalimporter2_example.xlsx";
+			var genericLabels = String.Empty;
+			var ext = file.FileName.Split('.').Last();
+			var fileName = DateTime.Now.ToString("yyMMdd_hhmmss_") + Guid.NewGuid() + "." + ext;
+			var path = Path.Combine(Server.MapPath(Domain.Configuration.DefaultUploadUri), fileName);
+			file.SaveAs(path);
+
 			//var stories = pivotalExcelService.Stories(Path.Combine(Server.MapPath(Domain.Configuration.DefaultUploadUri), fileName));
 			var importInfo = pivotalExcelService.ImportInfo(Path.Combine(Server.MapPath(Domain.Configuration.DefaultUploadUri), fileName));
-
+			var stories = importInfo.Stories;
 			var projects = pivotalService.Projects();
-			var memberships = pivotalService.ProjectUsers(Domain.Configuration.PivotalDefaultProjectId);
+			var project = projects.Where(p => p.Id == projectId).FirstOrDefault();
+			var memberships = pivotalService.ProjectUsers(projectId);
 			var storyTypes = pivotalService.StoryTypes();
 
-			int projectId = Domain.Configuration.PivotalDefaultProjectId;
-			var model = new UploadModel(
-				importInfo.Stories.ToList()
+			var model = new UploadViewModel(
+				stories.ToList()
 				, projects
 				, memberships
 				, storyTypes
 				, projectId
-				, importInfo.GenericLabels);
+				, project.Name
+				, importInfo.GenericLabels
+				);
 
-			return View(model);
+			return View(model); 
 		}
 
 		
@@ -145,26 +132,5 @@ namespace PivotalImporter2.Web.Controllers
 			return View(new UploadSuccessModel(project, projUsers, projStories));
 		}
 
-		/// <summary>
-		/// Page to display projects, users, stories
-		/// </summary>
-		/// <returns></returns>
-		public ActionResult ViewProjectDetails()
-		{
-			var projects = pivotalService.Projects();
-			var projUsers = new Dictionary<int, IEnumerable<PivotalMembership>>();
-			var projStories = new Dictionary<int, IEnumerable<PivotalStory>>();
-
-			foreach (var p in projects)
-			{
-				var users = pivotalService.ProjectUsers(p.Id.Value);
-				projUsers.Add(p.Id.Value, users);
-
-				var stories = pivotalService.ProjectStories(p.Id.Value);
-				projStories.Add(p.Id.Value, stories);
-			}
-
-			return View(new TestPivotalModel(projects, projUsers, projStories));
-		}
 	}
 }

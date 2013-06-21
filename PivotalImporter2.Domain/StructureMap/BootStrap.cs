@@ -1,5 +1,4 @@
 ﻿using PivotalImporter2.Domain.Cacheing;
-using PivotalImporter2.Domain.PivotalTracker;
 using PivotalImporter2.Domain.Security;
 using PivotalImporter2.Domain.Services;
 using StructureMap;

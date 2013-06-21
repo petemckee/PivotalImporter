@@ -1,4 +1,5 @@
-﻿using PivotalImporter2.Domain.Security;
+﻿using System;
+using PivotalImporter2.Domain.Security;
 using PivotalTrackerAPI.Domain.Model;
 
 namespace PivotalImporter2.Domain.Services
@@ -18,8 +19,20 @@ namespace PivotalImporter2.Domain.Services
 		public PivotalUser ValidateUser(string userName, string password)
 		{
 			// Check Pivotal
-			var user = PivotalUser.GetUserFromCredentials(userName, password);
-			return (user);
+			try
+			{
+				var user = PivotalUser.GetUserFromCredentials(userName, password);
+
+				// Clear cache items
+				
+
+				return (user);
+			}
+			catch (Exception e)
+			{
+				return null;
+			}
+			
 		}
 
 		public string ApiToken()

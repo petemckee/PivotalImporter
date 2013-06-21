@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PivotalImporter2.Domain.Security;
 using PivotalTrackerAPI.Domain.Enumerations;
 using PivotalTrackerAPI.Domain.Model;
 
@@ -8,11 +9,15 @@ namespace PivotalImporter2.Domain.Services
 {
 	public class PivotalTrackerApi : IPivotalTrackerApi
 	{
+		private readonly IFormsAuthenticationService formsAuthenticationService;
 		private PivotalUser user;
 
-		public PivotalTrackerApi()
+		public PivotalTrackerApi(IFormsAuthenticationService formsAuthenticationService )
 		{
-			user = new PivotalUser(Configuration.PivotalApiToken);
+			this.formsAuthenticationService = formsAuthenticationService;
+
+			//user = new PivotalUser(Configuration.PivotalApiToken);
+			user = new PivotalUser(this.formsAuthenticationService.ApiToken());
 		}
 
 		public IEnumerable<PivotalProject> Projects()

@@ -65,6 +65,7 @@ var pivotalList = {
 	, save: function () {
 		var me = this;
 
+	    var defaultName = 'None';
 		me.stories = new Array();
 		me.listEl.find('.story:not(.deletedItem)').each(function (index, value) {
 
@@ -78,12 +79,15 @@ var pivotalList = {
 				tasks.push($(this).text());
 			});
 
+		    var requestor = $(this).find('select[name="requestor"]').val();
+		    var owner = $(this).find('select[name="owner"]').val();
+		    
 			var s = {
 				Name: detailWrapper.find('input[name="name"]').val()
 				, Estimate: $(this).find('input[name="estimate"]').val()
 				, Description: detailWrapper.find('textarea[name="description"]').val()
-				, Requestor: $(this).find('select[name="requestor"]').val()
-				, Owner: $(this).find('select[name="owner"]').val()
+				, Requestor: (requestor == defaultName) ? '' : requestor
+				, Owner: (owner == defaultName) ? '' : owner
 				, LabelValues: labels
 				, Tasks: tasks
 				, CurrentState: 'Unscheduled'

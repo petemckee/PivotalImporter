@@ -5,6 +5,7 @@ using System.Web.Routing;
 
 namespace PivotalImporter2.Web
 {
+	//	Deprecated
 	public class StructureMapControllerFactory : DefaultControllerFactory
 	{
 		protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)

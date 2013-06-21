@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<PivotalImporter2.Web.Controllers.Models.UploadModel>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<PivotalImporter2.Web.Controllers.Models.UploadViewModel>" %>
 <%@ Import Namespace="PivotalImporter2.Domain.Extensions" %>
 <%@ Import Namespace="PivotalTrackerAPI.Domain.Enumerations" %>
 
@@ -12,12 +12,8 @@
 
 	<div class="confirmHeader">
 		<div class="storyCountWrapper">
-			<span class="storyCount"><%: Model.PivotalStories.Count %></span> stories to upload to
-			<select name="projectId" id="projectId">
-				<% foreach (var p in Model.PivotalProjects) { %>
-					<option value="<%: p.Id %>" <%: (Model.ProjectId == p.Id) ? " selected=\"selected\"" : String.Empty %>><%: p.Name %></option>
-				<%} %>
-			</select>
+			<span class="storyCount"><%: Model.PivotalStories.Count %></span> stories to upload to <span class="uploadToProject"><%: Model.ProjectName %></span>
+            <input type="hidden" value="<%: Model.ProjectId %>" name="projectId"  id="projectId"/>
 		</div>
 		<button class="btnUploadToPivotal"><span>Upload to Pivotal</span></button>
 	</div>
@@ -82,9 +78,10 @@
 					<li class="clearfix requester select_list">
 					  <div class="left">REQUESTER</div>
 					  <div class="right">
-							<select name="storyType">
+							<select name="requestor">
+							    <option value="">None</option>
 								<% foreach (var option in Model.PivotalMemberships) { %>
-									<option value="<%: option.Person.Name %>" <%= (story.Requestor == option.Person.Name) ? "selected=\"selected\"" : String.Empty %>><%: option.Person.Name %></option>
+									<option value="<%: option.Person.Name %>" <%= ((story.Requestor != null ? story.Requestor.ToUpperInvariant() : String.Empty)== option.Person.Name.ToUpperInvariant()) ? "selected=\"selected\"" : String.Empty %>><%: option.Person.Name %></option>
 								<% } %>
 							</select>
 					  </div>
@@ -93,15 +90,15 @@
 					  <div class="left">OWNER</div>
 					  <div class="right">
 						<select name="owner">
+						    <option value="">None</option>
 								<% foreach (var option in Model.PivotalMemberships) { %>
-									<option value="<%: option.Person.Name %>" <%= (story.Owner == option.Person.Name) ? "selected=\"selected\"" : String.Empty %>><%: option.Person.Name %></option>
+									<option value="<%: option.Person.Name %>" <%= ((story.Owner != null ? story.Owner.ToUpperInvariant() : String.Empty) == option.Person.Name.ToUpperInvariant()) ? "selected=\"selected\"" : String.Empty %>><%: option.Person.Name %></option>
 								<% } %>
 							</select>
 					  </div>
 					</li>
     
 				  </ul>
-
 				
 				<label>Description</label>
 				<textarea class="fullWidth desc" name="description" rows="3" cols="80"><%: story.Description %></textarea>

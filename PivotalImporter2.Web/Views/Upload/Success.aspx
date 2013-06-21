@@ -61,9 +61,10 @@
 					<li class="clearfix requester select_list">
 					  <div class="left">REQUESTER</div>
 					  <div class="right">
-							<select name="storyType">
+							<select name="requestor">
+							    <option value="">None</option>
 								<% foreach (var option in Model.PivotalMemberships) { %>
-									<option value="<%: option.Person.Name %>" <%= (story.Requestor == option.Person.Name) ? "selected=\"selected\"" : String.Empty %>><%: option.Person.Name %></option>
+									<option value="<%: option.Person.Name %>" <%= ((story.Requestor != null ? story.Requestor.ToUpperInvariant() : String.Empty) == option.Person.Name.ToUpperInvariant()) ? "selected=\"selected\"" : String.Empty %>><%: option.Person.Name %></option>
 								<% } %>
 							</select>
 					  </div>
@@ -72,8 +73,9 @@
 					  <div class="left">OWNER</div>
 					  <div class="right">
 						<select name="owner">
+						    <option value="">None</option>
 								<% foreach (var option in Model.PivotalMemberships) { %>
-									<option value="<%: option.Person.Name %>" <%= (story.Owner == option.Person.Name) ? "selected=\"selected\"" : String.Empty %>><%: option.Person.Name %></option>
+									<option value="<%: option.Person.Name %>" <%= ((story.Owner != null ? story.Owner.ToUpperInvariant() : String.Empty) == option.Person.Name.ToUpperInvariant()) ? "selected=\"selected\"" : String.Empty %>><%: option.Person.Name %></option>
 								<% } %>
 							</select>
 					  </div>

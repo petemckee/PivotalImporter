@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using PivotalImporter2.Domain.Cacheing;
 using PivotalImporter2.Domain.Security;
-using PivotalImporter2.Domain.Services;
 using PivotalTrackerAPI.Domain.Enumerations;
 using PivotalTrackerAPI.Domain.Model;
 
-namespace PivotalImporter2.Domain.PivotalTracker
+namespace PivotalImporter2.Domain.Services
 {
 	public class PivotalService : IPivotalService
 	{
@@ -50,7 +49,7 @@ namespace PivotalImporter2.Domain.PivotalTracker
 			{
 				this.projects = this.user.FetchProjects();
 				// set cache
-				cacheProvider.Set(cacheNameProjects, projects, cacheProvider.CacheTime());
+				cacheProvider.Set(formsAuthenticationService.ApiToken() + cacheNameProjects, projects, cacheProvider.CacheTime());
 				return this.projects;
 			}
 			else
@@ -79,10 +78,10 @@ namespace PivotalImporter2.Domain.PivotalTracker
 				memberships = (cacheProvider.Get(cacheNameCurrentProject) as List<PivotalMembership>);
 			}
 			else
-			{
-				var project = this.projects.Where(x => x.Id == projectId).First();
+			{		
+				var project = this.Projects().FirstOrDefault(p => p.Id == projectId);
 				memberships = project.FetchMembers(user);
-				cacheProvider.Set(cacheNameCurrentProject, memberships, cacheProvider.CacheTime());
+				cacheProvider.Set(formsAuthenticationService.ApiToken() + cacheNameCurrentProject, memberships, cacheProvider.CacheTime());
 			}
 
 			// TODO - option to order or not / extension?
@@ -109,7 +108,7 @@ namespace PivotalImporter2.Domain.PivotalTracker
 				stories = project.FetchStories(this.user);
 
 				// set cache
-				cacheProvider.Set(cacheName, stories, cacheProvider.CacheTime());
+				cacheProvider.Set(formsAuthenticationService.ApiToken() + cacheName, stories, cacheProvider.CacheTime());
 			}
 			else
 			{
