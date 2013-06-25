@@ -1,4 +1,10 @@
 ﻿
+
+//-- clear less files from localStorage
+// wont need for release build when compressed + css
+localStorage.clear();
+
+
 var pivotalList = {
 	listEl: null
 	, stories: null
@@ -23,8 +29,11 @@ var pivotalList = {
 				}
 			});
 			$('.detail .hide').click(function (e) {
-				e.preventDefault();
-				me.hideItem($(this).closest('.story'));
+			    e.preventDefault();
+			    //-- Update name
+			    var $story = $(this).closest('div.story');
+			    $story.find('div.summary span.name').text($story.find('div.detailName input[name="name"]').val());
+			    me.hideItem($(this).closest('.story'));
 			});
 
 			$('.del').click(function (e) {
@@ -45,9 +54,17 @@ var pivotalList = {
 				story.find('.del').show();
 			});
 
-			$('.detail input[name="estimate"]').blur(function () {
-				me.updateEstimate($(this));
+			$('.detail select[name="estimate"]').blur(function () {
+			    if (isNaN($(this).val() / 1) == false) {
+			        me.updateEstimate($(this));
+			    } else {
+			        $(this).val(0);
+			        $(this).focus();
+			        alert('Estimate must be an integer.');
+			    }
 			});
+		    
+
 		}
 
 		me.listEl.find('.story .detail').hide();
@@ -56,7 +73,6 @@ var pivotalList = {
 		$('.storyCount').text(this.listEl.find('.story:not(.deletedItem)').length);
 	}
 	, updateEstimate: function (estEl) {
-		var me = this;
 		var estimate = $(estEl).val();
 		var estSpan = $(estEl).closest('.story').find('.summary .estimate span');
 		$(estSpan).attr('class', '');

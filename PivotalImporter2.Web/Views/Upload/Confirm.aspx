@@ -9,8 +9,8 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	
 	<form action="">
-
-	<div class="confirmHeader">
+    
+    <div class="confirmHeader">
 		<div class="storyCountWrapper">
 			<span class="storyCount"><%: Model.PivotalStories.Count %></span> stories to upload to <span class="uploadToProject"><%: Model.ProjectName %></span>
             <input type="hidden" value="<%: Model.ProjectId %>" name="projectId"  id="projectId"/>
@@ -66,15 +66,21 @@
 					<li class="clearfix points point_scale_linear">
 					  <div class="left">POINTS</div>
 					  <div class="right">
-						<input type="text" name="estimate" value="<%: story.Estimate %>" />
+                          <select name="estimate">
+                              <option value="-1" <%: (story.Estimate == -1) ? "selected=\"selected\"" : null %>>Unestimated</option>
+                              <option value="0" <%: (story.Estimate == 0) ? "selected=\"selected\"" : null %>>0</option>
+                              <option value="1" <%: (story.Estimate == 1) ? "selected=\"selected\"" : null %>>1</option>
+                              <option value="2" <%: (story.Estimate == 2) ? "selected=\"selected\"" : null %>>2</option>
+                              <option value="3" <%: (story.Estimate == 3) ? "selected=\"selected\"" : null %>>3</option>
+                           </select>
 					  </div>
 					</li>
-					<li class="clearfix state">
+					<%--<li class="clearfix state">
 					  <div class="left">STATE</div>
 					  <div class="right">
 							<span>Not yet scheduled</span>
 					  </div>
-					</li>
+					</li>--%>
 					<li class="clearfix requester select_list">
 					  <div class="left">REQUESTER</div>
 					  <div class="right">
